@@ -198,7 +198,7 @@ export const Footer: React.FC = () => {
               Global Support
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-slate-300">
-              <li><Link to="/#contact" className="hover:text-white transition-colors">24/7 Concierge Desk</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">24/7 Concierge Desk</Link></li>
               <li>Zurich &bull; Dubai &bull; Singapore &bull; London</li>
               <li className="tabular-nums">+41 44 580 92 00</li>
               <li>concierge@intregawings.com</li>
@@ -214,7 +214,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-6">
             <Link to="/" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/flights" className="hover:text-white transition-colors">Conditions of Carriage</Link>
-            <Link to="/#contact" className="hover:text-white transition-colors">Partner API Terms</Link>
+            <Link to="/contact" className="hover:text-white transition-colors">Partner API Terms</Link>
           </div>
         </div>
       </div>

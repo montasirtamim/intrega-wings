@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Globe, LogIn, LogOut, Menu, Moon, Sun, UserPlus, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -20,25 +20,11 @@ export const Navbar: React.FC = () => {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Automatically close mobile drawer whenever the route or hash changes
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname, location.hash]);
-
-  const handleContactClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setMobileOpen(false);
-    if (location.pathname === '/') {
-      const el = document.getElementById('contact');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    } else {
-      navigate('/#contact');
-    }
-  };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `relative text-sm font-medium tracking-wide transition-colors py-2 group ${
@@ -126,14 +112,18 @@ export const Navbar: React.FC = () => {
               )}
             </NavLink>
 
-            <a
-              href="/#contact"
-              onClick={handleContactClick}
-              className="relative text-sm font-medium tracking-wide text-[#334155] hover:text-[#0B1F3A] dark:text-[#CBD5E1] dark:hover:text-[#F8FAFC] transition-colors py-2 group cursor-pointer"
-            >
-              <span>Contact</span>
-              <span className="absolute inset-x-0 bottom-0 h-[1.5px] bg-[#C5A059] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-            </a>
+            <NavLink to="/contact" className={navLinkClass}>
+              {({ isActive }) => (
+                <>
+                  <span>Contact</span>
+                  <span
+                    className={`absolute inset-x-0 bottom-0 h-[1.5px] bg-[#C5A059] transition-transform origin-left duration-300 ${
+                      isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`}
+                  />
+                </>
+              )}
+            </NavLink>
           </nav>
 
           {/* Desktop Controls: Currency, Theme, Auth */}
@@ -259,6 +249,7 @@ export const Navbar: React.FC = () => {
                   { label: 'Flights (Ticketing)', to: '/flights', end: false },
                   { label: 'Tours & Attractions', to: '/tours', end: false },
                   { label: 'My Bookings', to: '/my-bookings', end: false },
+                  { label: 'Contact', to: '/contact', end: false },
                 ].map((item) => (
                   <NavLink
                     key={item.to}
@@ -280,14 +271,6 @@ export const Navbar: React.FC = () => {
                     )}
                   </NavLink>
                 ))}
-
-                <a
-                  href="/#contact"
-                  onClick={handleContactClick}
-                  className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#0B1F3A] dark:text-[#F8FAFC] hover:bg-[#0B1F3A]/5 dark:hover:bg-white/5"
-                >
-                  <span>Contact</span>
-                </a>
               </div>
 
               {/* Mobile Currency Selector */}

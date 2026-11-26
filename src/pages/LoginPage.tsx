@@ -150,7 +150,7 @@ export const LoginPage: React.FC = () => {
                 <span>Remember me</span>
               </label>
               <Link
-                to="/#contact"
+                to="/contact"
                 className="text-[#9E7E3E] dark:text-[#D8B774] hover:underline font-medium"
               >
                 Need assistance?

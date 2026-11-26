@@ -7,6 +7,7 @@ import { PageTransition } from './components/PageTransition';
 import { ScrollManager } from './components/ScrollManager';
 import { AppProvider, useApp } from './context/AppContext';
 import { BookingPage } from './pages/BookingPage';
+import { ContactPage } from './pages/ContactPage';
 import { FlightsPage } from './pages/FlightsPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
@@ -97,6 +98,14 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <MyBookingsPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <PageTransition>
+              <ContactPage />
             </PageTransition>
           }
         />

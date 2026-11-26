@@ -66,15 +66,14 @@ const SOCIAL_CHANNELS = [
 export const ContactAndSocialSection: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [topic, setTopic] = useState('Flight Reservation & PNR');
+  const [topic, setTopic] = useState('General Concierge Inquiry');
   const [message, setMessage] = useState('');
-  const [submittedRef, setSubmittedRef] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !message.trim()) return;
-    const refId = `IW-CS-${Math.floor(100000 + Math.random() * 900000)}`;
-    setSubmittedRef(refId);
+    setSubmitted(true);
     setName('');
     setEmail('');
     setMessage('');
@@ -93,9 +92,8 @@ export const ContactAndSocialSection: React.FC = () => {
               At Your Service Worldwide
             </h2>
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-3 leading-relaxed">
-              Whether arranging multi-continent itineraries, verifying a Binance Pay settlement, or
-              coordinating private transfers, our multilingual aviation specialists respond within
-              minutes.
+              Reach our multilingual aviation specialists anytime for travel assistance, corporate
+              partnerships, private transfers, or general inquiries.
             </p>
           </div>
 
@@ -146,13 +144,13 @@ export const ContactAndSocialSection: React.FC = () => {
         {/* Interactive Inquiry Form */}
         <div className="lg:col-span-7 rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-white/10 p-6 sm:p-8 shadow-sm">
           <h3 className="font-serif text-2xl text-[#0B1F3A] dark:text-white">
-            Direct Concierge Inquiry
+            Direct Concierge Message
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Submit your message and receive an instant reference ticket from our global desk.
+            Send a direct message and our international concierge team will respond promptly.
           </p>
 
-          {submittedRef ? (
+          {submitted ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -160,15 +158,15 @@ export const ContactAndSocialSection: React.FC = () => {
             >
               <div className="flex items-center gap-2.5 text-emerald-700 dark:text-emerald-300 font-semibold">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>Inquiry Received — Reference {submittedRef}</span>
+                <span>Message Sent Successfully</span>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Thank you for contacting Intrega Wings. A dedicated international travel advisor has
-                been assigned to your ticket and will respond shortly.
+                Thank you for contacting Intrega Wings. Our international concierge desk has
+                received your message and will reply to your email shortly.
               </p>
               <button
                 type="button"
-                onClick={() => setSubmittedRef(null)}
+                onClick={() => setSubmitted(false)}
                 className="text-xs font-semibold uppercase tracking-wider text-[#0B1F3A] dark:text-[#D8B774] underline cursor-pointer"
               >
                 Send Another Message
@@ -226,10 +224,10 @@ export const ContactAndSocialSection: React.FC = () => {
                   onChange={(e) => setTopic(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-[#0B1F3A]/15 dark:border-white/15 bg-[#F8FAFC] dark:bg-[#070F1D] text-sm text-[#0B1F3A] dark:text-white focus:outline-none focus:border-[#C5A059]"
                 >
-                  <option>Flight Reservation &amp; PNR</option>
-                  <option>Crypto / Binance Pay Verification</option>
-                  <option>Official Tourist Spot Partner Handoff</option>
+                  <option>General Concierge Inquiry</option>
+                  <option>Global Offices &amp; Partnerships</option>
                   <option>Corporate &amp; Private Charter</option>
+                  <option>Press &amp; Media Relations</option>
                 </select>
               </div>
 
@@ -246,7 +244,7 @@ export const ContactAndSocialSection: React.FC = () => {
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Share your flight route, PNR, or concierge request..."
+                  placeholder="How can our international concierge team assist you today?"
                   className="w-full px-4 py-3 rounded-xl border border-[#0B1F3A]/15 dark:border-white/15 bg-[#F8FAFC] dark:bg-[#070F1D] text-sm text-[#0B1F3A] dark:text-white focus:outline-none focus:border-[#C5A059] resize-none"
                 />
               </div>
