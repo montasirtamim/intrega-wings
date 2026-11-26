@@ -8,9 +8,11 @@ import {
   Clock,
   Copy,
   Download,
+  ExternalLink,
   Lock,
   Radio,
   ShieldCheck,
+  Smartphone,
   Wallet,
   X,
 } from 'lucide-react';
@@ -46,16 +48,19 @@ interface CryptoMethodMeta {
   targetLabel: string;
 }
 
+const BINANCE_LIVE_WEB_URL = 'https://www.binance.com/en/my/wallet/account/payment/send';
+const BINANCE_APP_DEEP_LINK = 'bnc://app.binance.com/payment/secpay';
+
 const CRYPTO_METHODS: CryptoMethodMeta[] = [
   {
     id: 'BINANCE_PAY',
     label: 'Binance Pay',
-    network: 'Instant Merchant Pay ID',
+    network: 'UID: 570428214',
     symbol: 'USDT',
     usdRate: 1,
     decimals: 2,
-    depositTarget: 'IW-BINANCE-482910384',
-    targetLabel: 'Official Binance Pay ID',
+    depositTarget: '570428214',
+    targetLabel: 'Official Binance Pay UID',
   },
   {
     id: 'USDT_TRC20',
@@ -169,6 +174,7 @@ export const BookingCheckoutModal: React.FC<BookingCheckoutModalProps> = ({
   const [isVerifying, setIsVerifying] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [binanceLaunched, setBinanceLaunched] = useState(false);
 
   const methodMeta = useMemo(
     () => CRYPTO_METHODS.find((m) => m.id === selectedMethod) || CRYPTO_METHODS[0],
@@ -557,7 +563,13 @@ export const BookingCheckoutModal: React.FC<BookingCheckoutModalProps> = ({
               {/* Dynamic Amount + QR Code + Copyable Wallet */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-5 p-5 rounded-2xl bg-[#F8FAFC] dark:bg-[#070F1D] border border-[#0B1F3A]/12 dark:border-[#D8B774]/20">
                 <div className="md:col-span-4 flex flex-col items-center justify-center bg-white rounded-xl p-3 border border-slate-200">
-                  {qrDataUrl ? (
+                  {selectedMethod === 'BINANCE_PAY' ? (
+                    <img
+                      src="./images/binance-pay-qr.jpg"
+                      alt="Official Intrega Wings Binance Pay QR Code (UID 570428214)"
+                      className="w-44 h-44 object-contain rounded"
+                    />
+                  ) : qrDataUrl ? (
                     <img
                       src={qrDataUrl}
                       alt={`QR Code for ${methodMeta.label}`}
@@ -566,8 +578,10 @@ export const BookingCheckoutModal: React.FC<BookingCheckoutModalProps> = ({
                   ) : (
                     <div className="w-40 h-40 bg-slate-100 animate-pulse rounded" />
                   )}
-                  <span className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                    Scan via {methodMeta.label}
+                  <span className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600 text-center">
+                    {selectedMethod === 'BINANCE_PAY'
+                      ? 'Scan in Binance App • UID 570428214'
+                      : `Scan via ${methodMeta.label}`}
                   </span>
                 </div>
 
@@ -595,7 +609,7 @@ export const BookingCheckoutModal: React.FC<BookingCheckoutModalProps> = ({
                       {methodMeta.targetLabel}
                     </p>
                     <div className="flex items-center gap-2">
-                      <code className="flex-1 px-3 py-2.5 rounded-lg bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-white/10 text-xs font-mono text-[#0B1F3A] dark:text-slate-200 break-all">
+                      <code className="flex-1 px-3 py-2.5 rounded-lg bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-white/10 text-sm font-mono font-bold text-[#0B1F3A] dark:text-[#D8B774] break-all">
                         {methodMeta.depositTarget}
                       </code>
                       <button
@@ -604,10 +618,52 @@ export const BookingCheckoutModal: React.FC<BookingCheckoutModalProps> = ({
                         className="px-3 py-2.5 rounded-lg border border-[#0B1F3A]/15 dark:border-[#D8B774]/25 bg-white dark:bg-[#111C2E] text-xs font-semibold text-[#0B1F3A] dark:text-[#D8B774] hover:border-[#C5A059] inline-flex items-center gap-1.5 shrink-0 cursor-pointer"
                       >
                         {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                        {copied ? 'Copied' : 'Copy'}
+                        {copied ? 'Copied' : 'Copy UID'}
                       </button>
                     </div>
                   </div>
+
+                  {/* Live Open Binance Pay Portal Bar */}
+                  {selectedMethod === 'BINANCE_PAY' && (
+                    <div className="p-3.5 rounded-xl bg-[#FCD535]/15 dark:bg-[#FCD535]/10 border border-[#FCD535]/50 space-y-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B1F3A] dark:text-[#FCD535]">
+                          Live Binance Pay Checkout
+                        </span>
+                        <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300">
+                          UID: 570428214
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <a
+                          id="open-live-binance-web"
+                          href={BINANCE_LIVE_WEB_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setBinanceLaunched(true)}
+                          className="flex-1 min-w-[180px] px-4 py-2.5 rounded-lg bg-[#FCD535] hover:bg-[#f0c71e] text-[#0B1F3A] text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-2 shadow-sm transition-colors"
+                        >
+                          <span>Open Live Binance Pay</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                        <a
+                          id="open-live-binance-app"
+                          href={BINANCE_APP_DEEP_LINK}
+                          onClick={() => setBinanceLaunched(true)}
+                          className="px-3.5 py-2.5 rounded-lg border border-[#0B1F3A]/20 dark:border-[#FCD535]/40 bg-white dark:bg-[#111C2E] text-[#0B1F3A] dark:text-[#FCD535] text-xs font-semibold inline-flex items-center justify-center gap-1.5 hover:border-[#FCD535] transition-colors"
+                        >
+                          <Smartphone className="w-3.5 h-3.5" />
+                          <span>Binance App</span>
+                        </a>
+                      </div>
+                      {binanceLaunched && (
+                        <p className="text-[11px] text-emerald-700 dark:text-emerald-300 font-medium">
+                          Live Binance Pay page opened. Send <strong>{cryptoAmount} USDT</strong> to
+                          UID <strong>570428214</strong>, then enter your Binance Pay Order ID below.
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div>
                     <label
