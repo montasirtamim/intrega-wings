@@ -80,30 +80,65 @@ export const MyBookingsPage: React.FC = () => {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-8">
-        {/* Status Filter Tabs */}
-        <div className="flex flex-wrap gap-2">
-          {(
-            [
-              { id: 'ALL', label: `All Bookings (${counts.ALL})` },
-              { id: 'CONFIRMED', label: `Confirmed (${counts.CONFIRMED})` },
-              { id: 'PENDING_VERIFICATION', label: `Pending Verification (${counts.PENDING_VERIFICATION})` },
-              { id: 'CANCELLED', label: `Past / Cancelled (${counts.CANCELLED})` },
-            ] as { id: StatusTab; label: string }[]
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-[#0B1F3A] text-white dark:bg-[#C5A059] dark:text-[#070F1D]'
-                  : 'bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-[#C5A059]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {!user ? (
+          <div className="rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D8B774]/25 p-12 sm:p-16 text-center max-w-2xl mx-auto shadow-sm">
+            <div className="w-16 h-16 rounded-2xl bg-[#0B1F3A] dark:bg-[#C5A059]/15 text-[#D8B774] flex items-center justify-center mx-auto mb-5">
+              <Lock className="w-8 h-8" />
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9E7E3E] dark:text-[#D8B774]">
+              Private Traveler Vault
+            </p>
+            <h2 className="font-serif text-2xl sm:text-3xl text-[#0B1F3A] dark:text-white mt-2">
+              Log in to view your bookings
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 max-w-md mx-auto leading-relaxed">
+              You are currently browsing in Guest Demo Mode. Sign in to your Intrega Wings account
+              to access your personal reservations, payment verification status, and PDF E-Tickets.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                id="my-bookings-login-cta"
+                to="/login"
+                state={{ from: '/my-bookings' }}
+                className="px-6 py-3 rounded-xl bg-[#0B1F3A] hover:bg-[#132E54] dark:bg-[#C5A059] dark:hover:bg-[#D8B774] text-white dark:text-[#070F1D] text-xs font-bold uppercase tracking-wider transition-colors"
+              >
+                Log in to view your bookings
+              </Link>
+              <Link
+                to="/signup"
+                state={{ from: '/my-bookings' }}
+                className="px-6 py-3 rounded-xl border border-[#0B1F3A]/15 dark:border-[#D8B774]/30 text-xs font-semibold uppercase tracking-wider text-[#0B1F3A] dark:text-[#D8B774] hover:border-[#C5A059] transition-colors"
+              >
+                Create Account
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Status Filter Tabs */}
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  { id: 'ALL', label: `All Bookings (${counts.ALL})` },
+                  { id: 'CONFIRMED', label: `Confirmed (${counts.CONFIRMED})` },
+                  { id: 'PENDING_VERIFICATION', label: `Pending Verification (${counts.PENDING_VERIFICATION})` },
+                  { id: 'CANCELLED', label: `Past / Cancelled (${counts.CANCELLED})` },
+                ] as { id: StatusTab; label: string }[]
+              ).map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    activeTab === tab.id
+                      ? 'bg-[#0B1F3A] text-white dark:bg-[#C5A059] dark:text-[#070F1D]'
+                      : 'bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-[#C5A059]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
         {/* Bookings Grid */}
         {visibleBookings.length === 0 ? (
@@ -320,6 +355,8 @@ export const MyBookingsPage: React.FC = () => {
               );
             })}
           </div>
+        )}
+          </>
         )}
       </div>
     </div>

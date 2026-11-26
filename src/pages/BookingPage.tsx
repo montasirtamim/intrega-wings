@@ -129,12 +129,28 @@ export const BookingPage: React.FC = () => {
     createPendingBooking,
     verifyBookingPayment,
     user,
+    showToast,
   } = useApp();
 
   const { flightId } = useParams<{ flightId?: string }>();
   const [urlSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Strict Guest / Demo Mode Guard: block direct access to booking & payment checkout
+  useEffect(() => {
+    if (!user) {
+      const msg = 'Please create an account or log in to book a ticket.';
+      showToast(msg);
+      navigate('/login', {
+        replace: true,
+        state: {
+          from: `${location.pathname}${location.search}`,
+          authMessage: msg,
+        },
+      });
+    }
+  }, [user, navigate, location.pathname, location.search, showToast]);
 
   const verifyBookingId = urlSearchParams.get('verifyBookingId');
   const existingPendingBooking = useMemo(
@@ -275,6 +291,10 @@ export const BookingPage: React.FC = () => {
     }, 1000);
     return () => window.clearInterval(timer);
   }, [step, activeBooking?.status]);
+
+  if (!user) {
+    return null;
+  }
 
   if (!activeFlight) {
     return (

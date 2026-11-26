@@ -110,6 +110,8 @@ export interface PaymentRecord {
 
 export interface Booking {
   id: string;
+  userId?: string;
+  userEmail?: string;
   pnr: string;
   status: BookingStatus;
   createdAt: string;

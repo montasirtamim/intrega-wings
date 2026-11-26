@@ -28,6 +28,8 @@ export const FlightsPage: React.FC = () => {
     executeSearch,
     currency,
     setSelectedFlight,
+    user,
+    showToast,
   } = useApp();
 
   const [urlParams, setUrlParams] = useSearchParams();
@@ -126,7 +128,21 @@ export const FlightsPage: React.FC = () => {
 
   const handleSelectFlight = (flight: Flight) => {
     setSelectedFlight(flight);
-    navigate(`/booking/${encodeURIComponent(flight.id)}`);
+    const targetBookingUrl = `/booking/${encodeURIComponent(flight.id)}`;
+
+    if (!user) {
+      const msg = 'Please create an account or log in to book a ticket.';
+      showToast(msg);
+      navigate('/login', {
+        state: {
+          from: targetBookingUrl,
+          authMessage: msg,
+        },
+      });
+      return;
+    }
+
+    navigate(targetBookingUrl);
   };
 
   return (

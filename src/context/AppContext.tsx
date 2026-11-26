@@ -22,11 +22,34 @@ export const DEFAULT_SEARCH_PARAMS: FlightSearchParams = {
 const STORAGE_KEYS = {
   THEME: 'intrega-wings-theme',
   CURRENCY: 'intrega-wings-currency',
-  BOOKINGS: 'intrega-wings-bookings-v1',
+  LEGACY_SHARED_BOOKINGS: 'intrega-wings-bookings-v1',
   AUTH_USER: 'intrega-wings-auth-user-v1',
   ACCOUNTS: 'intrega-wings-accounts-v1',
   SELECTED_FLIGHT: 'intrega-wings-selected-flight',
 };
+
+function getUserBookingsKey(email: string): string {
+  return `intrega_bookings_${email.trim().toLowerCase()}`;
+}
+
+function loadBookingsForUser(email: string): Booking[] {
+  try {
+    const raw = localStorage.getItem(getUserBookingsKey(email));
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as Booking[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveBookingsForUser(email: string, bookings: Booking[]): void {
+  try {
+    localStorage.setItem(getUserBookingsKey(email), JSON.stringify(bookings));
+  } catch {
+    // ignore storage errors
+  }
+}
 
 interface StoredAccount extends UserProfile {
   password: string;
@@ -51,13 +74,16 @@ interface AppContextValue {
   bookings: Booking[];
   activeBookingsCount: number;
   pendingBookingsCount: number;
-  createPendingBooking: (booking: Booking) => void;
+  createPendingBooking: (booking: Booking) => boolean;
   verifyBookingPayment: (bookingId: string, txId: string) => Booking | undefined;
   cancelBooking: (bookingId: string) => void;
   user: UserProfile | null;
   login: (email: string, password: string) => AuthResult;
   signup: (fullName: string, email: string, phone: string, password: string) => AuthResult;
   logout: () => void;
+  toastMessage: string | null;
+  showToast: (msg: string) => void;
+  clearToast: () => void;
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -104,15 +130,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  const [bookings, setBookings] = useState<Booking[]>(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.BOOKINGS);
-      return raw ? (JSON.parse(raw) as Booking[]) : [];
-    } catch {
-      return [];
-    }
-  });
-
   const [user, setUser] = useState<UserProfile | null>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
@@ -122,7 +139,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  // Sync theme to documentElement & localStorage
+  // Strict User-Specific Booking Storage:
+  // Logged-out guests ALWAYS start with [] and never read from any global shared key.
+  const [bookings, setBookings] = useState<Booking[]>(() => {
+    try {
+      // Remove any legacy global shared bookings key so it can never leak
+      localStorage.removeItem(STORAGE_KEYS.LEGACY_SHARED_BOOKINGS);
+      const rawUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+      if (!rawUser) return [];
+      const currentUser = JSON.parse(rawUser) as UserProfile;
+      return currentUser?.email ? loadBookingsForUser(currentUser.email) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+  }, []);
+
+  const clearToast = useCallback(() => {
+    setToastMessage(null);
+  }, []);
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const t = window.setTimeout(() => setToastMessage(null), 5000);
+    return () => window.clearTimeout(t);
+  }, [toastMessage]);
+
+  // Sync theme
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -147,16 +195,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
-  // Sync bookings
+  // Whenever user changes: load ONLY that user's bookings, or strictly reset to [] on logout
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
-    } catch {
-      // ignore
+    if (!user) {
+      setBookings([]);
+    } else {
+      setBookings(loadBookingsForUser(user.email));
     }
-  }, [bookings]);
+  }, [user]);
 
-  // Sync selected flight to sessionStorage
   const setSelectedFlight = useCallback((flight: Flight | null) => {
     setSelectedFlightState(flight);
     try {
@@ -170,7 +217,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
-  // Execute global dual-source flight search
   const executeSearch = useCallback(async (params: FlightSearchParams) => {
     setSearchParams(params);
     setIsSearching(true);
@@ -182,7 +228,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
-  // Initial flagship flight inventory load
   useEffect(() => {
     executeSearch(DEFAULT_SEARCH_PARAMS);
   }, [executeSearch]);
@@ -191,40 +236,66 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
-  const createPendingBooking = useCallback((booking: Booking) => {
-    setBookings((prev) => [booking, ...prev]);
-  }, []);
+  const createPendingBooking = useCallback(
+    (booking: Booking): boolean => {
+      if (!user) return false;
+      const ownedBooking: Booking = {
+        ...booking,
+        userId: user.id,
+        userEmail: user.email,
+      };
+      setBookings((prev) => {
+        const next = [ownedBooking, ...prev];
+        saveBookingsForUser(user.email, next);
+        return next;
+      });
+      return true;
+    },
+    [user]
+  );
 
-  const verifyBookingPayment = useCallback((bookingId: string, txId: string): Booking | undefined => {
-    let confirmedBooking: Booking | undefined;
-    setBookings((prev) =>
-      prev.map((b) => {
-        if (b.id !== bookingId) return b;
-        confirmedBooking = {
-          ...b,
-          status: 'CONFIRMED',
-          payment: {
-            ...b.payment,
-            txId,
-            verifiedAt: new Date().toISOString(),
-            webhookEventId: `WH-BNP-${Math.floor(100000 + Math.random() * 900000)}`,
-          },
-        };
-        return confirmedBooking;
-      })
-    );
-    return confirmedBooking;
-  }, []);
+  const verifyBookingPayment = useCallback(
+    (bookingId: string, txId: string): Booking | undefined => {
+      if (!user) return undefined;
+      let confirmedBooking: Booking | undefined;
+      setBookings((prev) => {
+        const next = prev.map((b) => {
+          if (b.id !== bookingId) return b;
+          confirmedBooking = {
+            ...b,
+            status: 'CONFIRMED',
+            payment: {
+              ...b.payment,
+              txId,
+              verifiedAt: new Date().toISOString(),
+              webhookEventId: `WH-BNP-${Math.floor(100000 + Math.random() * 900000)}`,
+            },
+          };
+          return confirmedBooking;
+        });
+        saveBookingsForUser(user.email, next);
+        return next;
+      });
+      return confirmedBooking;
+    },
+    [user]
+  );
 
-  const cancelBooking = useCallback((bookingId: string) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.id === bookingId
-          ? { ...b, status: 'CANCELLED', cancelledAt: new Date().toISOString() }
-          : b
-      )
-    );
-  }, []);
+  const cancelBooking = useCallback(
+    (bookingId: string) => {
+      if (!user) return;
+      setBookings((prev) => {
+        const next = prev.map((b) =>
+          b.id === bookingId
+            ? { ...b, status: 'CANCELLED' as const, cancelledAt: new Date().toISOString() }
+            : b
+        );
+        saveBookingsForUser(user.email, next);
+        return next;
+      });
+    },
+    [user]
+  );
 
   const login = useCallback((email: string, password: string): AuthResult => {
     const normalizedEmail = email.trim().toLowerCase();
@@ -232,7 +303,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { ok: false, error: 'Please enter both email and password.' };
     }
 
-    // Support built-in demo traveler account
     if (normalizedEmail === 'elena@intregawings.com' && password === 'Intrega2026!') {
       const demoUser: UserProfile = {
         id: 'usr-demo-elena',
@@ -242,6 +312,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createdAt: '2026-01-10T09:00:00.000Z',
       };
       setUser(demoUser);
+      setBookings(loadBookingsForUser(demoUser.email));
       try {
         localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(demoUser));
       } catch {
@@ -270,6 +341,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: match.createdAt,
     };
     setUser(profile);
+    setBookings(loadBookingsForUser(profile.email));
     try {
       localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(profile));
     } catch {
@@ -305,6 +377,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
 
       setUser(profile);
+      setBookings([]);
       try {
         localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(nextAccounts));
         localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(profile));
@@ -316,8 +389,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     []
   );
 
+  // Strict Logout: immediately clear currentUser from React state & localStorage,
+  // and immediately reset displayed bookings to []
   const logout = useCallback(() => {
     setUser(null);
+    setBookings([]);
     try {
       localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
     } catch {
@@ -325,8 +401,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
-  const activeBookingsCount = bookings.filter((b) => b.status !== 'CANCELLED').length;
-  const pendingBookingsCount = bookings.filter((b) => b.status === 'PENDING_VERIFICATION').length;
+  const activeBookingsCount = user
+    ? bookings.filter((b) => b.status !== 'CANCELLED').length
+    : 0;
+  const pendingBookingsCount = user
+    ? bookings.filter((b) => b.status === 'PENDING_VERIFICATION').length
+    : 0;
 
   return (
     <AppContext.Provider
@@ -341,7 +421,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         executeSearch,
         selectedFlight,
         setSelectedFlight,
-        bookings,
+        bookings: user ? bookings : [],
         activeBookingsCount,
         pendingBookingsCount,
         createPendingBooking,
@@ -351,6 +431,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         login,
         signup,
         logout,
+        toastMessage,
+        showToast,
+        clearToast,
       }}
     >
       {children}

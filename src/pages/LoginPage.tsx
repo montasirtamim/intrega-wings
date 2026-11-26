@@ -9,7 +9,9 @@ export const LoginPage: React.FC = () => {
   const { login } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
-  const fromPath = (location.state as { from?: string } | null)?.from || '/my-bookings';
+  const locationState = location.state as { from?: string; authMessage?: string } | null;
+  const fromPath = locationState?.from || '/my-bookings';
+  const authMessage = locationState?.authMessage;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -55,6 +57,12 @@ export const LoginPage: React.FC = () => {
         </div>
 
         <div className="p-7 space-y-5">
+          {authMessage && !error && (
+            <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-[#D4AF37]/12 border border-amber-300/70 dark:border-[#D4AF37]/35 text-xs font-medium text-amber-900 dark:text-[#F3D77D] flex items-center gap-2">
+              <Lock className="w-4 h-4 shrink-0" />
+              <span>{authMessage}</span>
+            </div>
+          )}
           {error && (
             <div className="p-3.5 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0" />
