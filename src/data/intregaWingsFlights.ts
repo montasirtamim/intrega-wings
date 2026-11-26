@@ -96,6 +96,31 @@ function hashRoute(origin: string, destination: string): number {
   return h;
 }
 
+const ADMIN_CUSTOM_FLEET_KEY = 'intrega_admin_custom_flights_v1';
+
+export function getCustomAdminFleetRoutes(): IntregaFleetRouteConfig[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_CUSTOM_FLEET_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as IntregaFleetRouteConfig[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveCustomAdminFleetRoutes(routes: IntregaFleetRouteConfig[]): void {
+  try {
+    localStorage.setItem(ADMIN_CUSTOM_FLEET_KEY, JSON.stringify(routes));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function getAllIntregaFleetRoutes(): IntregaFleetRouteConfig[] {
+  return [...getCustomAdminFleetRoutes(), ...INTREGA_WINGS_SCHEDULE];
+}
+
 export function getIntregaWingsInjectedFlights(
   originCode: string,
   destinationCode: string,
@@ -106,7 +131,8 @@ export function getIntregaWingsInjectedFlights(
   const destination = getAirportByCode(destinationCode);
   const multiplier = CABIN_MULTIPLIER[cabinClass];
 
-  const exactMatches = INTREGA_WINGS_SCHEDULE.filter(
+  const allRoutes = getAllIntregaFleetRoutes();
+  const exactMatches = allRoutes.filter(
     (r) => r.originCode === origin.code && r.destinationCode === destination.code
   );
 

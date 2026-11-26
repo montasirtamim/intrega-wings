@@ -32,7 +32,7 @@ export const LoginPage: React.FC = () => {
       setError(res.error || 'Unable to sign in.');
       return;
     }
-    navigate(fromPath, { replace: true });
+    navigate(res.role === 'admin' ? '/admin' : fromPath, { replace: true });
   };
 
   return (

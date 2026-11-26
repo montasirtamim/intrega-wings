@@ -12,9 +12,9 @@ import {
   X,
 } from 'lucide-react';
 import {
-  TOURIST_SPOTS,
   buildOfficialPartnerDeepLink,
   buildPartnerApiHandoffPayload,
+  getMergedTouristSpots,
 } from '../data/touristSpots';
 import type { CurrencyCode, TouristSpot } from '../types';
 import { formatPrice } from '../utils/currency';
@@ -42,13 +42,15 @@ export const TouristSpotsSection: React.FC<TouristSpotsSectionProps> = ({ curren
   const [showDevPayload, setShowDevPayload] = useState(false);
   const [handoffTriggered, setHandoffTriggered] = useState(false);
 
+  const allSpots = useMemo(() => getMergedTouristSpots(), []);
+
   const visibleSpots = useMemo(() => {
-    if (activeCategory === 'All') return TOURIST_SPOTS;
+    if (activeCategory === 'All') return allSpots;
     if (activeCategory === 'Bangladesh') {
-      return TOURIST_SPOTS.filter((s) => s.country === 'Bangladesh');
+      return allSpots.filter((s) => s.country === 'Bangladesh');
     }
-    return TOURIST_SPOTS.filter((s) => s.category === activeCategory);
-  }, [activeCategory]);
+    return allSpots.filter((s) => s.category === activeCategory);
+  }, [activeCategory, allSpots]);
 
   const openSpotModal = (spot: TouristSpot) => {
     setSelectedSpot(spot);

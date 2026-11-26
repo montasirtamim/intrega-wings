@@ -475,3 +475,66 @@ export function buildPartnerApiHandoffPayload(
     timestamp: new Date().toISOString(),
   };
 }
+
+const ADMIN_CUSTOM_TOURS_KEY = 'intrega_admin_custom_tours_v1';
+const ADMIN_TOUR_OVERRIDES_KEY = 'intrega_admin_tour_overrides_v1';
+
+export interface TourOverride {
+  basePriceUsd?: number;
+  availability?: TouristSpot['availability'];
+}
+
+export function getCustomAdminTours(): TouristSpot[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_CUSTOM_TOURS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as TouristSpot[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveCustomAdminTours(spots: TouristSpot[]): void {
+  try {
+    localStorage.setItem(ADMIN_CUSTOM_TOURS_KEY, JSON.stringify(spots));
+  } catch {
+    // ignore
+  }
+}
+
+export function getTourOverrides(): Record<string, TourOverride> {
+  try {
+    const raw = localStorage.getItem(ADMIN_TOUR_OVERRIDES_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, TourOverride>) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveTourOverrides(overrides: Record<string, TourOverride>): void {
+  try {
+    localStorage.setItem(ADMIN_TOUR_OVERRIDES_KEY, JSON.stringify(overrides));
+  } catch {
+    // ignore
+  }
+}
+
+export function getMergedTouristSpots(): TouristSpot[] {
+  const custom = getCustomAdminTours();
+  const overrides = getTourOverrides();
+  const combined = [...custom, ...TOURIST_SPOTS];
+  return combined.map((spot) => {
+    const ov = overrides[spot.id];
+    if (!ov) return spot;
+    const nextBase = ov.basePriceUsd ?? spot.basePriceUsd;
+    return {
+      ...spot,
+      basePriceUsd: nextBase,
+      availability: ov.availability ?? spot.availability,
+      packages: spot.packages.map((pkg, idx) =>
+        idx === 0 ? { ...pkg, priceUsd: nextBase } : pkg
+      ),
+    };
+  });
+}

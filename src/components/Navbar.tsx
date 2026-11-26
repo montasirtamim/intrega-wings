@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Globe, LogIn, LogOut, Menu, Moon, Sun, UserPlus, X } from 'lucide-react';
+import { Globe, LogIn, LogOut, Menu, Moon, ShieldCheck, Sun, UserPlus, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import type { CurrencyCode } from '../types';
 import { CURRENCIES } from '../utils/currency';
@@ -15,6 +15,7 @@ export const Navbar: React.FC = () => {
     setCurrency,
     activeBookingsCount,
     user,
+    isAdmin,
     logout,
   } = useApp();
 
@@ -132,6 +133,22 @@ export const Navbar: React.FC = () => {
                 </>
               )}
             </NavLink>
+
+            <NavLink to="/admin" className={navLinkClass}>
+              {({ isActive }) => (
+                <>
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
+                    <span>Admin</span>
+                  </span>
+                  <span
+                    className={`absolute inset-x-0 bottom-0 h-[1.5px] bg-[#C5A059] transition-transform origin-left duration-300 ${
+                      isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`}
+                  />
+                </>
+              )}
+            </NavLink>
           </nav>
 
           {/* Desktop Controls: Currency, Theme, Auth */}
@@ -168,7 +185,7 @@ export const Navbar: React.FC = () => {
             {user ? (
               <div className="flex items-center gap-2">
                 <Link
-                  to="/my-bookings"
+                  to={isAdmin ? '/admin' : '/my-bookings'}
                   className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#0B1F3A]/6 dark:bg-[#111C2E] border border-[#0B1F3A]/10 dark:border-[#D8B774]/25"
                 >
                   <span className="w-6 h-6 rounded-full bg-[#C5A059] text-[#070F1D] text-[10px] font-bold flex items-center justify-center">
@@ -258,6 +275,7 @@ export const Navbar: React.FC = () => {
                   { label: 'Tours & Attractions', to: '/tours', end: false },
                   { label: 'My Bookings', to: '/my-bookings', end: false },
                   { label: 'Contact', to: '/contact', end: false },
+                  { label: 'Admin Panel', to: '/admin', end: false },
                 ].map((item) => (
                   <NavLink
                     key={item.to}

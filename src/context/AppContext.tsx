@@ -28,8 +28,10 @@ const STORAGE_KEYS = {
   SELECTED_FLIGHT: 'intrega-wings-selected-flight',
 };
 
+const USER_BOOKINGS_PREFIX = 'intrega_bookings_';
+
 function getUserBookingsKey(email: string): string {
-  return `intrega_bookings_${email.trim().toLowerCase()}`;
+  return `${USER_BOOKINGS_PREFIX}${email.trim().toLowerCase()}`;
 }
 
 function loadBookingsForUser(email: string): Booking[] {
@@ -57,7 +59,12 @@ interface StoredAccount extends UserProfile {
 
 interface AuthResult {
   ok: boolean;
+  role?: 'admin' | 'user';
   error?: string;
+}
+
+export interface SystemBookingEntry extends Booking {
+  ownerEmail: string;
 }
 
 interface AppContextValue {
@@ -78,9 +85,15 @@ interface AppContextValue {
   verifyBookingPayment: (bookingId: string, txId: string) => Booking | undefined;
   cancelBooking: (bookingId: string) => void;
   user: UserProfile | null;
+  isAdmin: boolean;
   login: (email: string, password: string) => AuthResult;
   signup: (fullName: string, email: string, phone: string, password: string) => AuthResult;
   logout: () => void;
+  // Admin-exclusive operations
+  getAllSystemBookings: () => SystemBookingEntry[];
+  adminVerifySystemBooking: (ownerEmail: string, bookingId: string) => void;
+  adminCancelSystemBooking: (ownerEmail: string, bookingId: string) => void;
+  getRegisteredUsers: () => UserProfile[];
   toastMessage: string | null;
   showToast: (msg: string) => void;
   clearToast: () => void;
@@ -139,11 +152,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  // Strict User-Specific Booking Storage:
-  // Logged-out guests ALWAYS start with [] and never read from any global shared key.
   const [bookings, setBookings] = useState<Booking[]>(() => {
     try {
-      // Remove any legacy global shared bookings key so it can never leak
       localStorage.removeItem(STORAGE_KEYS.LEGACY_SHARED_BOOKINGS);
       const rawUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
       if (!rawUser) return [];
@@ -170,7 +180,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => window.clearTimeout(t);
   }, [toastMessage]);
 
-  // Sync theme
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -185,7 +194,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [theme]);
 
-  // Sync currency
   const setCurrency = useCallback((c: CurrencyCode) => {
     setCurrencyState(c);
     try {
@@ -195,7 +203,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
-  // Whenever user changes: load ONLY that user's bookings, or strictly reset to [] on logout
   useEffect(() => {
     if (!user) {
       setBookings([]);
@@ -303,12 +310,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { ok: false, error: 'Please enter both email and password.' };
     }
 
+    // Official Intrega Wings Admin Account
+    if (normalizedEmail === 'admin@intregawings.com' && password === 'Admin2026!') {
+      const adminUser: UserProfile = {
+        id: 'usr-admin-01',
+        fullName: 'Chief Aviation Admin',
+        email: 'admin@intregawings.com',
+        phone: '+41 44 580 92 00',
+        role: 'admin',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      };
+      setUser(adminUser);
+      setBookings(loadBookingsForUser(adminUser.email));
+      try {
+        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(adminUser));
+      } catch {
+        // ignore
+      }
+      return { ok: true, role: 'admin' };
+    }
+
+    // Demo Traveler Account
     if (normalizedEmail === 'elena@intregawings.com' && password === 'Intrega2026!') {
       const demoUser: UserProfile = {
         id: 'usr-demo-elena',
         fullName: 'Elena Lindqvist',
         email: 'elena@intregawings.com',
         phone: '+41 44 580 92 14',
+        role: 'user',
         createdAt: '2026-01-10T09:00:00.000Z',
       };
       setUser(demoUser);
@@ -318,7 +347,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch {
         // ignore
       }
-      return { ok: true };
+      return { ok: true, role: 'user' };
     }
 
     const accounts = getStoredAccounts();
@@ -338,6 +367,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       fullName: match.fullName,
       email: match.email,
       phone: match.phone,
+      role: match.role || 'user',
       createdAt: match.createdAt,
     };
     setUser(profile);
@@ -347,12 +377,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {
       // ignore
     }
-    return { ok: true };
+    return { ok: true, role: profile.role };
   }, []);
 
   const signup = useCallback(
     (fullName: string, email: string, phone: string, password: string): AuthResult => {
       const normalizedEmail = email.trim().toLowerCase();
+      if (normalizedEmail === 'admin@intregawings.com') {
+        return { ok: false, error: 'This email is reserved for Intrega Wings administration.' };
+      }
+
       const accounts = getStoredAccounts();
       if (accounts.some((a) => a.email.toLowerCase() === normalizedEmail)) {
         return { ok: false, error: 'An account with this email already exists. Please log in.' };
@@ -363,6 +397,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         fullName: fullName.trim(),
         email: normalizedEmail,
         phone: phone.trim(),
+        role: 'user',
         password,
         createdAt: new Date().toISOString(),
       };
@@ -373,6 +408,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         fullName: newAccount.fullName,
         email: newAccount.email,
         phone: newAccount.phone,
+        role: 'user',
         createdAt: newAccount.createdAt,
       };
 
@@ -384,13 +420,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } catch {
         // ignore
       }
-      return { ok: true };
+      return { ok: true, role: 'user' };
     },
     []
   );
 
-  // Strict Logout: immediately clear currentUser from React state & localStorage,
-  // and immediately reset displayed bookings to []
   const logout = useCallback(() => {
     setUser(null);
     setBookings([]);
@@ -400,6 +434,90 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // ignore
     }
   }, []);
+
+  const isAdmin = user?.role === 'admin';
+
+  // Admin-exclusive: aggregates bookings across all user-specific keys (`intrega_bookings_*`)
+  const getAllSystemBookings = useCallback((): SystemBookingEntry[] => {
+    if (!isAdmin) return [];
+    const results: SystemBookingEntry[] = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith(USER_BOOKINGS_PREFIX)) continue;
+        const ownerEmail = key.slice(USER_BOOKINGS_PREFIX.length);
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw) as Booking[];
+        if (Array.isArray(parsed)) {
+          parsed.forEach((b) => {
+            results.push({ ...b, ownerEmail });
+          });
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return results.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [isAdmin]);
+
+  const adminVerifySystemBooking = useCallback(
+    (ownerEmail: string, bookingId: string) => {
+      if (!isAdmin) return;
+      const list = loadBookingsForUser(ownerEmail);
+      const next = list.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              status: 'CONFIRMED' as const,
+              payment: {
+                ...b.payment,
+                verifiedAt: new Date().toISOString(),
+                webhookEventId: `ADMIN-VERIFIED-${Math.floor(100000 + Math.random() * 900000)}`,
+              },
+            }
+          : b
+      );
+      saveBookingsForUser(ownerEmail, next);
+      if (user?.email.toLowerCase() === ownerEmail.toLowerCase()) {
+        setBookings(next);
+      }
+    },
+    [isAdmin, user?.email]
+  );
+
+  const adminCancelSystemBooking = useCallback(
+    (ownerEmail: string, bookingId: string) => {
+      if (!isAdmin) return;
+      const list = loadBookingsForUser(ownerEmail);
+      const next = list.map((b) =>
+        b.id === bookingId
+          ? { ...b, status: 'CANCELLED' as const, cancelledAt: new Date().toISOString() }
+          : b
+      );
+      saveBookingsForUser(ownerEmail, next);
+      if (user?.email.toLowerCase() === ownerEmail.toLowerCase()) {
+        setBookings(next);
+      }
+    },
+    [isAdmin, user?.email]
+  );
+
+  const getRegisteredUsers = useCallback((): UserProfile[] => {
+    if (!isAdmin) return [];
+    const stored = getStoredAccounts().map(({ password: _pw, ...profile }) => profile);
+    const demoTraveler: UserProfile = {
+      id: 'usr-demo-elena',
+      fullName: 'Elena Lindqvist (Demo)',
+      email: 'elena@intregawings.com',
+      phone: '+41 44 580 92 14',
+      role: 'user',
+      createdAt: '2026-01-10T09:00:00.000Z',
+    };
+    return [demoTraveler, ...stored];
+  }, [isAdmin]);
 
   const activeBookingsCount = user
     ? bookings.filter((b) => b.status !== 'CANCELLED').length
@@ -428,9 +546,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         verifyBookingPayment,
         cancelBooking,
         user,
+        isAdmin,
         login,
         signup,
         logout,
+        getAllSystemBookings,
+        adminVerifySystemBooking,
+        adminCancelSystemBooking,
+        getRegisteredUsers,
         toastMessage,
         showToast,
         clearToast,

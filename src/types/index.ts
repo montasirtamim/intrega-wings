@@ -11,6 +11,7 @@ export interface UserProfile {
   fullName: string;
   email: string;
   phone: string;
+  role?: 'admin' | 'user';
   createdAt: string;
 }
 

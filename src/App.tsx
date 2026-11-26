@@ -6,6 +6,7 @@ import { Navbar } from './components/Navbar';
 import { PageTransition } from './components/PageTransition';
 import { ScrollManager } from './components/ScrollManager';
 import { AppProvider, useApp } from './context/AppContext';
+import { AdminPage } from './pages/AdminPage';
 import { BookingPage } from './pages/BookingPage';
 import { ContactPage } from './pages/ContactPage';
 import { FlightsPage } from './pages/FlightsPage';
@@ -106,6 +107,14 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <ContactPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PageTransition>
+              <AdminPage />
             </PageTransition>
           }
         />
