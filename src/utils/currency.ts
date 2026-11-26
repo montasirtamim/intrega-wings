@@ -10,6 +10,7 @@ export interface CurrencyConfig {
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
   USD: { code: 'USD', symbol: '$', name: 'US Dollar', rateFromUsd: 1, decimals: 0 },
+  BDT: { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', rateFromUsd: 119.5, decimals: 0 },
   EUR: { code: 'EUR', symbol: '€', name: 'Euro', rateFromUsd: 0.92, decimals: 0 },
   GBP: { code: 'GBP', symbol: '£', name: 'British Pound', rateFromUsd: 0.79, decimals: 0 },
   AED: { code: 'AED', symbol: 'AED ', name: 'UAE Dirham', rateFromUsd: 3.67, decimals: 0 },

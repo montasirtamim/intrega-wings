@@ -1,10 +1,18 @@
 export type ThemeMode = 'light' | 'dark';
 
-export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'JPY' | 'SGD' | 'CHF';
+export type CurrencyCode = 'USD' | 'BDT' | 'EUR' | 'GBP' | 'AED' | 'JPY' | 'SGD' | 'CHF';
 
 export type TripType = 'one-way' | 'round-trip' | 'multi-city';
 
 export type CabinClass = 'Economy' | 'Business' | 'First Class';
+
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+}
 
 export interface Airport {
   code: string;
@@ -66,7 +74,7 @@ export interface Flight {
   terminalArr: string;
 }
 
-export type BookingStatus = 'PENDING_VERIFICATION' | 'CONFIRMED';
+export type BookingStatus = 'PENDING_VERIFICATION' | 'CONFIRMED' | 'CANCELLED';
 
 export type CryptoPaymentMethod = 'BINANCE_PAY' | 'USDT_TRC20' | 'USDT_BEP20' | 'BTC' | 'ETH';
 
@@ -78,6 +86,13 @@ export interface PassengerInfo {
   passportNumber: string;
   nationality: string;
   seatPreference: string;
+}
+
+export interface BookingAddOns {
+  extraBaggageKg: number;
+  loungeAccess: boolean;
+  priorityBoarding: boolean;
+  addOnsTotalUsd: number;
 }
 
 export interface PaymentRecord {
@@ -98,12 +113,14 @@ export interface Booking {
   pnr: string;
   status: BookingStatus;
   createdAt: string;
+  cancelledAt?: string;
   flight: Flight;
   tripType: TripType;
   returnDate?: string;
   passengers: PassengerCounts;
   primaryPassenger: PassengerInfo;
   seatNumber: string;
+  addOns?: BookingAddOns;
   totalPriceUsd: number;
   currencyAtBooking: CurrencyCode;
   payment: PaymentRecord;

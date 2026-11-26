@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ShieldCheck, Star } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
@@ -43,7 +44,7 @@ export const Footer: React.FC = () => {
           {/* Two Friendly Intrega Wings Aviation Staff Banner */}
           <div className="lg:col-span-7 relative min-h-[260px] sm:min-h-[320px] overflow-hidden">
             <img
-              src="./images/intrega-staff-banner.jpg"
+              src={`${import.meta.env.BASE_URL}images/intrega-staff-banner.jpg`}
               alt="Two friendly Intrega Wings aviation cabin managers wearing official deep navy and gold Intrega Wings uniforms in the airport lounge"
               className="w-full h-full object-cover object-center"
             />
@@ -155,7 +156,9 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-white/10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-4 space-y-4">
-            <BrandLogo inverted />
+            <Link to="/" aria-label="Intrega Wings Home">
+              <BrandLogo inverted />
+            </Link>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
               Intrega Wings operates as an official international airline and accredited global air
               agency, uniting flagship long-haul aviation with direct destination access.
@@ -171,10 +174,10 @@ export const Footer: React.FC = () => {
               Book &amp; Fly
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-slate-300">
-              <li><a href="#flights" className="hover:text-white transition-colors">International Flights</a></li>
-              <li><a href="#flights" className="hover:text-white transition-colors">Intrega Wings Fleet</a></li>
-              <li><a href="#tourist-spots" className="hover:text-white transition-colors">Tourist Spots</a></li>
-              <li><a href="#my-bookings" className="hover:text-white transition-colors">Manage Bookings</a></li>
+              <li><Link to="/flights" className="hover:text-white transition-colors">International Flights</Link></li>
+              <li><Link to="/tours" className="hover:text-white transition-colors">Tours &amp; Attractions</Link></li>
+              <li><Link to="/my-bookings" className="hover:text-white transition-colors">My Bookings</Link></li>
+              <li><Link to="/login" className="hover:text-white transition-colors">Member Login</Link></li>
             </ul>
           </div>
 
@@ -183,7 +186,7 @@ export const Footer: React.FC = () => {
               Settlement &amp; Compliance
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-slate-300">
-              <li>Binance Pay Merchant Settlement</li>
+              <li>Binance Pay (UID: 570428214)</li>
               <li>USDT (TRC20 / BEP20), BTC &amp; ETH</li>
               <li>Strict Payment Verification Gate</li>
               <li>Verified PDF E-Ticket Issuance</li>
@@ -195,7 +198,7 @@ export const Footer: React.FC = () => {
               Global Support
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm text-slate-300">
-              <li><a href="#contact" className="hover:text-white transition-colors">24/7 Concierge Desk</a></li>
+              <li><Link to="/#contact" className="hover:text-white transition-colors">24/7 Concierge Desk</Link></li>
               <li>Zurich &bull; Dubai &bull; Singapore &bull; London</li>
               <li className="tabular-nums">+41 44 580 92 00</li>
               <li>concierge@intregawings.com</li>
@@ -209,9 +212,9 @@ export const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
           <p>&copy; {new Date().getFullYear()} Intrega Wings International Air Agency &amp; Airline. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <a href="#top" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#top" className="hover:text-white transition-colors">Conditions of Carriage</a>
-            <a href="#top" className="hover:text-white transition-colors">Partner API Terms</a>
+            <Link to="/" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/flights" className="hover:text-white transition-colors">Conditions of Carriage</Link>
+            <Link to="/#contact" className="hover:text-white transition-colors">Partner API Terms</Link>
           </div>
         </div>
       </div>
