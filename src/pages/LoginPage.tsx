@@ -53,7 +53,9 @@ export const LoginPage: React.FC = () => {
         {/* Top Luxury Aviation Header */}
         <div className="px-7 py-7 bg-[#070D19] text-white border-b border-[#D4AF37]/30 text-center space-y-3">
           <div className="flex justify-center">
-            <BrandLogo inverted compact />
+            <Link to="/" aria-label="Intrega Wings Home" className="hover:opacity-90 transition-opacity">
+              <BrandLogo inverted compact />
+            </Link>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-medium">
             Welcome Back

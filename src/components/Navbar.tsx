@@ -47,7 +47,15 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 gap-4">
           {/* Brand Logo -> Home */}
-          <Link to="/" className="focus:outline-none shrink-0" aria-label="Intrega Wings Home">
+          <Link
+            to="/"
+            onClick={() => {
+              setMobileOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="focus:outline-none shrink-0 cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all"
+            aria-label="Intrega Wings Home"
+          >
             <BrandLogo />
           </Link>
 

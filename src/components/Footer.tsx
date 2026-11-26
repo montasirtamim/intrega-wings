@@ -156,7 +156,12 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-white/10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           <div className="md:col-span-4 space-y-4">
-            <Link to="/" aria-label="Intrega Wings Home">
+            <Link
+              to="/"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              aria-label="Intrega Wings Home"
+              className="inline-block hover:opacity-90 transition-opacity"
+            >
               <BrandLogo inverted />
             </Link>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
