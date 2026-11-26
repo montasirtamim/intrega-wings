@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, Cambria, serif;
+  --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-alabaster: #F8FAFC;
+  --color-navy: #0B1F3A;
+  --color-navy-deep: #071426;
+  --color-obsidian: #070F1D;
+  --color-slate-surface: #111C2E;
+  --color-gold: #C5A059;
+  --color-gold-champagne: #D8B774;
+  --color-gold-muted: #9E7E3E;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, .font-editorial {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Subtle editorial paper grain & architectural hairline dividers */
+.aviation-hairline {
+  border-color: rgba(11, 31, 58, 0.1);
+}
+.dark .aviation-hairline {
+  border-color: rgba(216, 183, 116, 0.14);
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(11, 31, 58, 0.22);
+  border-radius: 999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(216, 183, 116, 0.25);
+}
+
+/* Hero Airplane flight arc & atmospheric cloud drift */
+@keyframes cloudDriftSlow {
+  0% { transform: translateX(0px); }
+  50% { transform: translateX(28px); }
+  100% { transform: translateX(0px); }
+}
+
+@keyframes cloudDriftReverse {
+  0% { transform: translateX(0px); }
+  50% { transform: translateX(-24px); }
+  100% { transform: translateX(0px); }
+}
+
+@keyframes contrailFade {
+  0% { stroke-dashoffset: 1200; opacity: 0.2; }
+  35% { opacity: 0.7; }
+  80% { opacity: 0.55; }
+  100% { stroke-dashoffset: 0; opacity: 0.15; }
+}
+
+.animate-cloud-slow {
+  animation: cloudDriftSlow 22s ease-in-out infinite;
+}
+
+.animate-cloud-reverse {
+  animation: cloudDriftReverse 28s ease-in-out infinite;
+}
+
+.animate-contrail {
+  stroke-dasharray: 1200;
+  animation: contrailFade 14s linear infinite;
+}
