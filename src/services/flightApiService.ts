@@ -1,6 +1,6 @@
 import { getAirportByCode } from '../data/airports';
 import { getIntregaWingsInjectedFlights } from '../data/intregaWingsFlights';
-import type { CabinClass, Flight, FlightSearchParams } from '../types';
+import type { Airport, CabinClass, Flight, FlightSearchParams } from '../types';
 
 export const EXTERNAL_FLIGHT_API_CONFIG = {
   provider: 'AMADEUS_DUFFEL_BRIDGE',
@@ -12,6 +12,7 @@ interface PartnerCarrier {
   name: string;
   code: string;
   hub: string;
+  regions: Airport['region'][];
   aircraft: string[];
   priceFactor: number;
   bangladeshSpecialist?: boolean;
@@ -19,17 +20,46 @@ interface PartnerCarrier {
 }
 
 const PARTNER_CARRIERS: PartnerCarrier[] = [
-  { name: 'Biman Bangladesh Airlines', code: 'BG', hub: 'Dhaka', aircraft: ['Boeing 787-9 Dreamliner', 'Boeing 777-300ER'], priceFactor: 0.92, bangladeshSpecialist: true, domesticBangladesh: true },
-  { name: 'US-Bangla Airlines', code: 'BS', hub: 'Dhaka', aircraft: ['Airbus A330-300', 'Boeing 737-800'], priceFactor: 0.89, bangladeshSpecialist: true, domesticBangladesh: true },
-  { name: 'NOVOAIR', code: 'VQ', hub: 'Dhaka', aircraft: ['ATR 72-500'], priceFactor: 0.87, bangladeshSpecialist: true, domesticBangladesh: true },
-  { name: 'Emirates', code: 'EK', hub: 'Dubai', aircraft: ['Airbus A380-800', 'Boeing 777-300ER'], priceFactor: 1.08, bangladeshSpecialist: true },
-  { name: 'Qatar Airways', code: 'QR', hub: 'Doha', aircraft: ['Airbus A350-1000', 'Boeing 787-9'], priceFactor: 1.05, bangladeshSpecialist: true },
-  { name: 'Singapore Airlines', code: 'SQ', hub: 'Singapore', aircraft: ['Airbus A350-900', 'Boeing 777-300ER'], priceFactor: 1.12, bangladeshSpecialist: true },
-  { name: 'Turkish Airlines', code: 'TK', hub: 'Istanbul', aircraft: ['Airbus A350-900', 'Boeing 787-9'], priceFactor: 0.95, bangladeshSpecialist: true },
-  { name: 'Lufthansa', code: 'LH', hub: 'Frankfurt', aircraft: ['Boeing 747-8', 'Airbus A350-900'], priceFactor: 1.02 },
-  { name: 'SWISS International', code: 'LX', hub: 'Zurich', aircraft: ['Boeing 777-300ER', 'Airbus A330-300'], priceFactor: 1.07 },
-  { name: 'British Airways', code: 'BA', hub: 'London', aircraft: ['Airbus A350-1000', 'Boeing 787-10'], priceFactor: 1.01 },
-  { name: 'ANA All Nippon', code: 'NH', hub: 'Tokyo', aircraft: ['Boeing 787-9 Dreamliner', 'Boeing 777-300ER'], priceFactor: 1.09 },
+  // Bangladesh & South Asia
+  { name: 'Biman Bangladesh Airlines', code: 'BG', hub: 'Dhaka', regions: ['Asia-Pacific', 'Middle East', 'Europe'], aircraft: ['Boeing 787-9 Dreamliner', 'Boeing 777-300ER'], priceFactor: 0.92, bangladeshSpecialist: true, domesticBangladesh: true },
+  { name: 'US-Bangla Airlines', code: 'BS', hub: 'Dhaka', regions: ['Asia-Pacific', 'Middle East'], aircraft: ['Airbus A330-300', 'Boeing 737-800'], priceFactor: 0.89, bangladeshSpecialist: true, domesticBangladesh: true },
+  { name: 'NOVOAIR', code: 'VQ', hub: 'Dhaka', regions: ['Asia-Pacific'], aircraft: ['ATR 72-500'], priceFactor: 0.87, bangladeshSpecialist: true, domesticBangladesh: true },
+  { name: 'Air India', code: 'AI', hub: 'New Delhi', regions: ['Asia-Pacific', 'Europe', 'North America', 'Middle East'], aircraft: ['Airbus A350-900', 'Boeing 787-8'], priceFactor: 0.93 },
+  { name: 'SriLankan Airlines', code: 'UL', hub: 'Colombo', regions: ['Asia-Pacific', 'Middle East', 'Europe'], aircraft: ['Airbus A330-300', 'Airbus A321neo'], priceFactor: 0.91 },
+
+  // Middle East Global Connectors
+  { name: 'Emirates', code: 'EK', hub: 'Dubai', regions: ['Middle East', 'Europe', 'Asia-Pacific', 'North America', 'South America', 'Africa'], aircraft: ['Airbus A380-800', 'Boeing 777-300ER'], priceFactor: 1.08, bangladeshSpecialist: true },
+  { name: 'Qatar Airways', code: 'QR', hub: 'Doha', regions: ['Middle East', 'Europe', 'Asia-Pacific', 'North America', 'South America', 'Africa'], aircraft: ['Airbus A350-1000', 'Boeing 787-9'], priceFactor: 1.05, bangladeshSpecialist: true },
+  { name: 'Etihad Airways', code: 'EY', hub: 'Abu Dhabi', regions: ['Middle East', 'Europe', 'Asia-Pacific', 'North America', 'Africa'], aircraft: ['Airbus A350-1000', 'Boeing 787-10'], priceFactor: 1.03, bangladeshSpecialist: true },
+  { name: 'Saudia', code: 'SV', hub: 'Jeddah', regions: ['Middle East', 'Asia-Pacific', 'Europe', 'Africa', 'North America'], aircraft: ['Boeing 787-9', 'Boeing 777-300ER'], priceFactor: 0.96, bangladeshSpecialist: true },
+  { name: 'Oman Air', code: 'WY', hub: 'Muscat', regions: ['Middle East', 'Asia-Pacific', 'Europe'], aircraft: ['Boeing 787-9 Dreamliner'], priceFactor: 0.95 },
+
+  // Europe
+  { name: 'Turkish Airlines', code: 'TK', hub: 'Istanbul', regions: ['Europe', 'Middle East', 'Asia-Pacific', 'North America', 'South America', 'Africa'], aircraft: ['Airbus A350-900', 'Boeing 787-9'], priceFactor: 0.95, bangladeshSpecialist: true },
+  { name: 'Lufthansa', code: 'LH', hub: 'Frankfurt', regions: ['Europe', 'North America', 'South America', 'Asia-Pacific', 'Africa', 'Middle East'], aircraft: ['Boeing 747-8', 'Airbus A350-900'], priceFactor: 1.02 },
+  { name: 'SWISS International', code: 'LX', hub: 'Zurich', regions: ['Europe', 'North America', 'Asia-Pacific', 'Africa', 'Middle East'], aircraft: ['Boeing 777-300ER', 'Airbus A330-300'], priceFactor: 1.07 },
+  { name: 'British Airways', code: 'BA', hub: 'London', regions: ['Europe', 'North America', 'South America', 'Asia-Pacific', 'Africa', 'Middle East'], aircraft: ['Airbus A350-1000', 'Boeing 787-10'], priceFactor: 1.01 },
+  { name: 'Air France', code: 'AF', hub: 'Paris', regions: ['Europe', 'North America', 'South America', 'Asia-Pacific', 'Africa'], aircraft: ['Airbus A350-900', 'Boeing 777-300ER'], priceFactor: 1.02 },
+  { name: 'KLM Royal Dutch', code: 'KL', hub: 'Amsterdam', regions: ['Europe', 'North America', 'South America', 'Asia-Pacific', 'Africa'], aircraft: ['Boeing 787-10', 'Boeing 777-300ER'], priceFactor: 1.0 },
+  { name: 'ITA Airways', code: 'AZ', hub: 'Rome', regions: ['Europe', 'North America', 'South America', 'Asia-Pacific'], aircraft: ['Airbus A350-900', 'Airbus A330neo'], priceFactor: 0.97 },
+
+  // Asia-Pacific
+  { name: 'Singapore Airlines', code: 'SQ', hub: 'Singapore', regions: ['Asia-Pacific', 'Europe', 'North America', 'Middle East', 'Africa'], aircraft: ['Airbus A350-900', 'Boeing 777-300ER'], priceFactor: 1.12, bangladeshSpecialist: true },
+  { name: 'ANA All Nippon', code: 'NH', hub: 'Tokyo', regions: ['Asia-Pacific', 'North America', 'Europe'], aircraft: ['Boeing 787-9 Dreamliner', 'Boeing 777-300ER'], priceFactor: 1.09 },
+  { name: 'Japan Airlines', code: 'JL', hub: 'Tokyo', regions: ['Asia-Pacific', 'North America', 'Europe'], aircraft: ['Airbus A350-1000', 'Boeing 787-9'], priceFactor: 1.08 },
+  { name: 'Korean Air', code: 'KE', hub: 'Seoul', regions: ['Asia-Pacific', 'North America', 'Europe', 'Middle East'], aircraft: ['Boeing 787-10', 'Airbus A380-800'], priceFactor: 1.04 },
+  { name: 'Cathay Pacific', code: 'CX', hub: 'Hong Kong', regions: ['Asia-Pacific', 'Europe', 'North America', 'Middle East', 'Africa'], aircraft: ['Airbus A350-1000', 'Boeing 777-300ER'], priceFactor: 1.06, bangladeshSpecialist: true },
+  { name: 'Malaysia Airlines', code: 'MH', hub: 'Kuala Lumpur', regions: ['Asia-Pacific', 'Europe', 'Middle East'], aircraft: ['Airbus A350-900', 'Airbus A330-300'], priceFactor: 0.93, bangladeshSpecialist: true },
+  { name: 'Thai Airways', code: 'TG', hub: 'Bangkok', regions: ['Asia-Pacific', 'Europe', 'Middle East'], aircraft: ['Airbus A350-900', 'Boeing 777-300ER'], priceFactor: 0.95, bangladeshSpecialist: true },
+  { name: 'Qantas', code: 'QF', hub: 'Sydney', regions: ['Asia-Pacific', 'Europe', 'North America', 'South America', 'Africa'], aircraft: ['Boeing 787-9 Dreamliner', 'Airbus A380-800'], priceFactor: 1.1 },
+
+  // Americas & Africa
+  { name: 'Delta Air Lines', code: 'DL', hub: 'Atlanta', regions: ['North America', 'Europe', 'South America', 'Asia-Pacific', 'Africa'], aircraft: ['Airbus A350-900', 'Airbus A330-900neo'], priceFactor: 1.03 },
+  { name: 'United Airlines', code: 'UA', hub: 'New York', regions: ['North America', 'Europe', 'South America', 'Asia-Pacific', 'Africa'], aircraft: ['Boeing 787-10', 'Boeing 777-300ER'], priceFactor: 1.01 },
+  { name: 'Air Canada', code: 'AC', hub: 'Toronto', regions: ['North America', 'Europe', 'South America', 'Asia-Pacific', 'Middle East'], aircraft: ['Boeing 787-9 Dreamliner', 'Boeing 777-300ER'], priceFactor: 0.99 },
+  { name: 'LATAM Airlines', code: 'LA', hub: 'São Paulo', regions: ['South America', 'North America', 'Europe', 'Asia-Pacific'], aircraft: ['Boeing 787-9 Dreamliner', 'Boeing 777-300ER'], priceFactor: 0.98 },
+  { name: 'Ethiopian Airlines', code: 'ET', hub: 'Addis Ababa', regions: ['Africa', 'Europe', 'Asia-Pacific', 'Middle East', 'North America', 'South America'], aircraft: ['Airbus A350-1000', 'Boeing 787-9'], priceFactor: 0.94, bangladeshSpecialist: true },
+  { name: 'EgyptAir', code: 'MS', hub: 'Cairo', regions: ['Africa', 'Middle East', 'Europe', 'North America', 'Asia-Pacific'], aircraft: ['Boeing 787-9 Dreamliner', 'Airbus A330-300'], priceFactor: 0.93 },
 ];
 
 const CABIN_MULTIPLIER: Record<CabinClass, number> = {
@@ -63,7 +93,7 @@ export async function fetchExternalPartnerFlights(
   departureDate: string,
   cabinClass: CabinClass
 ): Promise<Flight[]> {
-  await new Promise((resolve) => setTimeout(resolve, 380));
+  await new Promise((resolve) => setTimeout(resolve, 340));
 
   const origin = getAirportByCode(originCode);
   const destination = getAirportByCode(destinationCode);
@@ -84,24 +114,39 @@ export async function fetchExternalPartnerFlights(
       ? 295 + (seed % 165)
       : 545 + (seed % 320);
 
-  const pool = isDomesticBD
-    ? PARTNER_CARRIERS.filter((c) => c.domesticBangladesh)
-    : involvesBD
-      ? PARTNER_CARRIERS.filter((c) => c.bangladeshSpecialist && c.code !== 'VQ')
-      : PARTNER_CARRIERS.filter((c) => !c.domesticBangladesh);
+  let pool: PartnerCarrier[];
+  if (isDomesticBD) {
+    pool = PARTNER_CARRIERS.filter((c) => c.domesticBangladesh);
+  } else if (involvesBD) {
+    pool = PARTNER_CARRIERS.filter((c) => c.bangladeshSpecialist && c.code !== 'VQ');
+  } else {
+    pool = PARTNER_CARRIERS.filter(
+      (c) =>
+        !c.domesticBangladesh &&
+        (c.regions.includes(origin.region) || c.regions.includes(destination.region))
+    );
+  }
 
-  const count = isDomesticBD ? pool.length : Math.min(6, pool.length);
-  const selectedCarriers = Array.from({ length: count }, (_, i) => {
-    return pool[(seed + i) % pool.length];
-  });
+  if (pool.length < 4) {
+    pool = PARTNER_CARRIERS.filter((c) => !c.domesticBangladesh);
+  }
+
+  const count = isDomesticBD ? pool.length : Math.min(8, pool.length);
+  const selectedCarriers: PartnerCarrier[] = [];
+  for (let i = 0; i < count; i++) {
+    const candidate = pool[(seed + i) % pool.length];
+    if (!selectedCarriers.some((c) => c.code === candidate.code)) {
+      selectedCarriers.push(candidate);
+    }
+  }
 
   return selectedCarriers.map((carrier, idx) => {
-    const isDirect = isDomesticBD || idx < 3 || (seed + idx) % 3 === 0;
+    const isDirect = isDomesticBD || idx < 4 || (seed + idx) % 3 === 0;
     const stops = isDirect ? 0 : 1;
     const extraStopMinutes = stops === 1 ? 115 + ((seed + idx * 17) % 80) : 0;
     const durationMinutes = baseDur + extraStopMinutes + (isDomesticBD ? idx * 5 : (idx * 15) % 45);
 
-    const depMinutes = ((7 + idx * 3 + (seed % 2)) % 21) * 60 + ((idx * 15) % 60);
+    const depMinutes = ((6 + idx * 2 + (seed % 3)) % 22) * 60 + ((idx * 15) % 60);
     const depFmt = formatTime(depMinutes);
     const arrFmt = formatTime(depMinutes + durationMinutes);
 

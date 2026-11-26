@@ -33,7 +33,7 @@ const AirportPicker: React.FC<AirportPickerProps> = ({ id, label, value, onChang
   const [query, setQuery] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
   const selected = getAirportByCode(value);
-  const matches = searchAirports(query).slice(0, 12);
+  const matches = searchAirports(query).slice(0, 30);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

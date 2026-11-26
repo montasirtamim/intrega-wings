@@ -196,8 +196,44 @@ export const FlightsPage: React.FC = () => {
         isSearching={isSearching}
       />
 
+      {/* Quick Global International Corridors Strip */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#9E7E3E] dark:text-[#D8B774] mr-1">
+            Global Routes:
+          </span>
+          {[
+            { from: 'DAC', to: 'DXB', label: 'Dhaka → Dubai' },
+            { from: 'LHR', to: 'DAC', label: 'London → Dhaka' },
+            { from: 'DAC', to: 'JFK', label: 'Dhaka → New York' },
+            { from: 'LHR', to: 'JFK', label: 'London → New York' },
+            { from: 'DXB', to: 'HND', label: 'Dubai → Tokyo' },
+            { from: 'SIN', to: 'SYD', label: 'Singapore → Sydney' },
+            { from: 'CDG', to: 'ICN', label: 'Paris → Seoul' },
+            { from: 'JFK', to: 'GRU', label: 'New York → São Paulo' },
+            { from: 'CAI', to: 'JNB', label: 'Cairo → Johannesburg' },
+          ].map((corridor) => (
+            <button
+              key={`${corridor.from}-${corridor.to}`}
+              type="button"
+              onClick={() =>
+                handleSearchSubmit({
+                  ...ctxSearchParams,
+                  tripType: 'round-trip',
+                  origin: corridor.from,
+                  destination: corridor.to,
+                })
+              }
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-[#C5A059] hover:text-[#0B1F3A] dark:hover:text-[#D8B774] transition-colors cursor-pointer"
+            >
+              {corridor.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Main Results + Sidebar Filters */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Filter Sidebar */}
           <motion.aside
