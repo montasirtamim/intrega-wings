@@ -69,7 +69,7 @@ const CRYPTO_METHODS: CryptoMethodMeta[] = [
     symbol: 'USDT',
     usdRate: 1,
     decimals: 2,
-    depositTarget: 'TW9xIntregaWingsOfficialTRC20Treasury7Kp9q',
+    depositTarget: 'TRiPSVGuujXngzf72CAaiRLbhenLW66oqh',
     targetLabel: 'USDT TRC20 Deposit Address',
   },
   {
@@ -79,7 +79,7 @@ const CRYPTO_METHODS: CryptoMethodMeta[] = [
     symbol: 'USDT',
     usdRate: 1,
     decimals: 2,
-    depositTarget: '0x71C9IntregaWingsBEP20Treasury92A4F8e1',
+    depositTarget: '0x84792f8081d8e5106094014021c282e980e7bdc2',
     targetLabel: 'USDT BEP20 Deposit Address',
   },
   {
@@ -89,7 +89,7 @@ const CRYPTO_METHODS: CryptoMethodMeta[] = [
     symbol: 'BTC',
     usdRate: 92500,
     decimals: 6,
-    depositTarget: 'bc1qintregawings88globalairtreasury9xk2m',
+    depositTarget: '19FiZ5Eh2xcupwpbRCcaDxS5GGouhPJ2sV',
     targetLabel: 'BTC Treasury Address',
   },
   {
@@ -99,7 +99,7 @@ const CRYPTO_METHODS: CryptoMethodMeta[] = [
     symbol: 'ETH',
     usdRate: 3420,
     decimals: 5,
-    depositTarget: '0x71C9IntregaWingsETHMainnetTreasury4E2b',
+    depositTarget: '0x84792f8081d8e5106094014021c282e980e7bdc2',
     targetLabel: 'ETH Treasury Address',
   },
 ];
