@@ -23,7 +23,14 @@ interface TouristSpotsSectionProps {
   currency: CurrencyCode;
 }
 
-const CATEGORIES = ['All', 'Theme Park', 'Landmark', 'Nature & Culture', 'Coastal Heritage'] as const;
+const CATEGORIES = [
+  'All',
+  'Bangladesh',
+  'Theme Park',
+  'Landmark',
+  'Nature & Culture',
+  'Coastal Heritage',
+] as const;
 
 export const TouristSpotsSection: React.FC<TouristSpotsSectionProps> = ({ currency }) => {
   const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>('All');
@@ -37,6 +44,9 @@ export const TouristSpotsSection: React.FC<TouristSpotsSectionProps> = ({ curren
 
   const visibleSpots = useMemo(() => {
     if (activeCategory === 'All') return TOURIST_SPOTS;
+    if (activeCategory === 'Bangladesh') {
+      return TOURIST_SPOTS.filter((s) => s.country === 'Bangladesh');
+    }
     return TOURIST_SPOTS.filter((s) => s.category === activeCategory);
   }, [activeCategory]);
 

@@ -1,6 +1,16 @@
 import type { Airport } from '../types';
 
 export const GLOBAL_AIRPORTS: Airport[] = [
+  // Bangladesh — Complete International & Domestic Network
+  { code: 'DAC', name: 'Hazrat Shahjalal International Airport', city: 'Dhaka', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'CGP', name: 'Shah Amanat International Airport', city: 'Chattogram', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'ZYL', name: 'Osmani International Airport', city: 'Sylhet', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'CXB', name: "Cox's Bazar International Airport", city: "Cox's Bazar", country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'JSR', name: 'Jashore Airport (Sundarbans Gateway)', city: 'Jashore', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'RJH', name: 'Shah Makhdum Airport', city: 'Rajshahi', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'SPD', name: 'Saidpur Airport', city: 'Saidpur', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'BZL', name: 'Barishal Airport', city: 'Barishal', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+
   // Europe
   { code: 'LHR', name: 'London Heathrow Airport', city: 'London', country: 'United Kingdom', region: 'Europe', timezone: 'GMT' },
   { code: 'CDG', name: 'Charles de Gaulle Airport', city: 'Paris', country: 'France', region: 'Europe', timezone: 'CET' },
@@ -24,6 +34,11 @@ export const GLOBAL_AIRPORTS: Airport[] = [
   { code: 'DOH', name: 'Hamad International Airport', city: 'Doha', country: 'Qatar', region: 'Middle East', timezone: 'AST' },
   { code: 'RUH', name: 'King Khalid International Airport', city: 'Riyadh', country: 'Saudi Arabia', region: 'Middle East', timezone: 'AST' },
   { code: 'JED', name: 'King Abdulaziz International Airport', city: 'Jeddah', country: 'Saudi Arabia', region: 'Middle East', timezone: 'AST' },
+  { code: 'MED', name: 'Prince Mohammad Bin Abdulaziz Intl', city: 'Madinah', country: 'Saudi Arabia', region: 'Middle East', timezone: 'AST' },
+  { code: 'DMM', name: 'King Fahd International Airport', city: 'Dammam', country: 'Saudi Arabia', region: 'Middle East', timezone: 'AST' },
+  { code: 'MCT', name: 'Muscat International Airport', city: 'Muscat', country: 'Oman', region: 'Middle East', timezone: 'GST' },
+  { code: 'KWI', name: 'Kuwait International Airport', city: 'Kuwait City', country: 'Kuwait', region: 'Middle East', timezone: 'AST' },
+  { code: 'BAH', name: 'Bahrain International Airport', city: 'Manama', country: 'Bahrain', region: 'Middle East', timezone: 'AST' },
 
   // Asia-Pacific
   { code: 'SIN', name: 'Singapore Changi Airport', city: 'Singapore', country: 'Singapore', region: 'Asia-Pacific', timezone: 'SGT' },
@@ -33,9 +48,11 @@ export const GLOBAL_AIRPORTS: Airport[] = [
   { code: 'HKG', name: 'Hong Kong International Airport', city: 'Hong Kong', country: 'Hong Kong', region: 'Asia-Pacific', timezone: 'HKT' },
   { code: 'BKK', name: 'Suvarnabhumi Airport', city: 'Bangkok', country: 'Thailand', region: 'Asia-Pacific', timezone: 'ICT' },
   { code: 'KUL', name: 'Kuala Lumpur International Airport', city: 'Kuala Lumpur', country: 'Malaysia', region: 'Asia-Pacific', timezone: 'MYT' },
-  { code: 'DAC', name: 'Hazrat Shahjalal International Airport', city: 'Dhaka', country: 'Bangladesh', region: 'Asia-Pacific', timezone: 'BST' },
+  { code: 'CCU', name: 'Netaji Subhas Chandra Bose Intl', city: 'Kolkata', country: 'India', region: 'Asia-Pacific', timezone: 'IST' },
   { code: 'DEL', name: 'Indira Gandhi International Airport', city: 'New Delhi', country: 'India', region: 'Asia-Pacific', timezone: 'IST' },
   { code: 'BOM', name: 'Chhatrapati Shivaji Maharaj Intl', city: 'Mumbai', country: 'India', region: 'Asia-Pacific', timezone: 'IST' },
+  { code: 'KTM', name: 'Tribhuvan International Airport', city: 'Kathmandu', country: 'Nepal', region: 'Asia-Pacific', timezone: 'NPT' },
+  { code: 'CMB', name: 'Bandaranaike International Airport', city: 'Colombo', country: 'Sri Lanka', region: 'Asia-Pacific', timezone: 'IST' },
   { code: 'SYD', name: 'Sydney Kingsford Smith Airport', city: 'Sydney', country: 'Australia', region: 'Asia-Pacific', timezone: 'AEDT' },
   { code: 'MEL', name: 'Melbourne Airport', city: 'Melbourne', country: 'Australia', region: 'Asia-Pacific', timezone: 'AEDT' },
   { code: 'MLE', name: 'Velana International Airport', city: 'Malé', country: 'Maldives', region: 'Asia-Pacific', timezone: 'MVT' },

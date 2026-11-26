@@ -134,11 +134,11 @@ const AirportPicker: React.FC<AirportPickerProps> = ({ id, label, value, onChang
 };
 
 const POPULAR_ROUTES = [
-  { origin: 'LHR', destination: 'DXB', label: 'London → Dubai' },
-  { origin: 'DXB', destination: 'HND', label: 'Dubai → Tokyo' },
-  { origin: 'JFK', destination: 'CDG', label: 'New York → Paris' },
-  { origin: 'SIN', destination: 'ZRH', label: 'Singapore → Zurich' },
   { origin: 'DAC', destination: 'DXB', label: 'Dhaka → Dubai' },
+  { origin: 'LHR', destination: 'DAC', label: 'London → Dhaka' },
+  { origin: 'DAC', destination: 'CXB', label: "Dhaka → Cox's Bazar" },
+  { origin: 'DAC', destination: 'SIN', label: 'Dhaka → Singapore' },
+  { origin: 'LHR', destination: 'DXB', label: 'London → Dubai' },
 ];
 
 export const FlightSearchEngine: React.FC<FlightSearchEngineProps> = ({
