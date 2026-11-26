@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
           {/* Two Friendly Intrega Wings Aviation Staff Banner */}
           <div className="lg:col-span-7 relative min-h-[260px] sm:min-h-[320px] overflow-hidden">
             <img
-              src="/images/intrega-staff-banner.jpg"
+              src="./images/intrega-staff-banner.jpg"
               alt="Two friendly Intrega Wings aviation cabin managers wearing official deep navy and gold Intrega Wings uniforms in the airport lounge"
               className="w-full h-full object-cover object-center"
             />
