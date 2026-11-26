@@ -259,28 +259,34 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Curated Tours Teaser CTA */}
-          <div className="mt-10 p-7 sm:p-8 rounded-2xl bg-[#0B1F3A] text-white border border-[#C5A059]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.55 }}
+            className="mt-10 p-7 sm:p-8 rounded-2xl bg-[#0B1F3A] text-white border border-[#C5A059]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+          >
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D8B774] inline-flex items-center gap-2">
                 <Compass className="w-4 h-4" />
                 Direct-to-Official Partner Access
               </p>
               <h3 className="font-serif text-2xl sm:text-3xl font-medium mt-2">
-                Pair Your Flight With Iconic Global Attractions
+                Pair Your Flight With Iconic Global &amp; Bangladesh Attractions
               </h3>
               <p className="text-sm text-slate-300 mt-2 leading-relaxed">
-                Reserve official dated entry for Disneyland Paris, Burj Khalifa SKY, Eiffel Tower
-                Summit, Mount Fuji Expeditions, Universal Studios, and Santorini Catamarans.
+                Reserve official dated entry for Cox&apos;s Bazar, Sundarbans, Sylhet Tea Estates,
+                Disneyland Paris, Burj Khalifa SKY, Eiffel Tower Summit, and Mount Fuji.
               </p>
             </div>
             <Link
               to="/tours"
-              className="px-6 py-3.5 rounded-xl bg-[#C5A059] hover:bg-[#D8B774] text-[#070F1D] text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 shrink-0 transition-colors"
+              className="px-6 py-3.5 rounded-xl bg-[#C5A059] hover:bg-[#D8B774] text-[#070F1D] text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Explore Tours &amp; Spots</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 

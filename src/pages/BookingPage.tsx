@@ -1155,7 +1155,12 @@ export const BookingPage: React.FC = () => {
           </div>
 
           {/* Right Sticky Itinerary & Fare Summary */}
-          <aside className="lg:col-span-4 rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D8B774]/20 p-6 space-y-5 lg:sticky lg:top-24">
+          <motion.aside
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.45, delay: 0.12 }}
+            className="lg:col-span-4 rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D8B774]/20 p-6 space-y-5 lg:sticky lg:top-24"
+          >
             <div className="border-b border-[#0B1F3A]/10 dark:border-white/10 pb-4">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9E7E3E] dark:text-[#D8B774]">
                 Itinerary Summary
@@ -1221,7 +1226,7 @@ export const BookingPage: React.FC = () => {
                 </span>
               </div>
             </div>
-          </aside>
+          </motion.aside>
         </div>
       </div>
     </div>

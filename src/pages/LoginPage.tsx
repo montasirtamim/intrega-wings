@@ -36,12 +36,19 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-14 bg-[#F8FAFC] dark:bg-[#070D19]">
+    <div className="relative overflow-hidden min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-14 bg-[#F8FAFC] dark:bg-[#070D19]">
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="w-full max-w-md rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D4AF37]/25 shadow-2xl overflow-hidden"
+        aria-hidden="true"
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 0.45, scale: 1 }}
+        transition={{ duration: 1.1 }}
+        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[720px] h-[320px] rounded-full bg-[#C5A059]/10 blur-3xl"
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 w-full max-w-md rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D4AF37]/25 shadow-2xl overflow-hidden"
       >
         {/* Top Luxury Aviation Header */}
         <div className="px-7 py-7 bg-[#070D19] text-white border-b border-[#D4AF37]/30 text-center space-y-3">

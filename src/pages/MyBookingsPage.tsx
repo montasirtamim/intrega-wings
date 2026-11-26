@@ -56,35 +56,66 @@ export const MyBookingsPage: React.FC = () => {
       <section className="bg-[#0B1F3A] dark:bg-[#070F1D] text-white pt-12 pb-14 border-b border-[#C5A059]/25">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D8B774]">
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D8B774]"
+            >
               Passenger Ledger &amp; E-Ticket Vault
-            </p>
-            <h1 className="font-serif text-3xl sm:text-5xl font-medium mt-2">
+            </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.08 }}
+              className="font-serif text-3xl sm:text-5xl font-medium mt-2"
+            >
               My Bookings
-            </h1>
-            <p className="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.14 }}
+              className="text-sm sm:text-base text-slate-300 mt-2 max-w-2xl"
+            >
               {user
                 ? `Welcome back, ${user.fullName}. Track payment verification status, manage reservations, and download verified PDF E-Tickets.`
                 : 'Track payment verification status, manage reservations, and download verified PDF E-Tickets.'}
-            </p>
+            </motion.p>
           </div>
 
-          <Link
-            to="/flights"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#C5A059] hover:bg-[#D8B774] text-[#070F1D] text-xs font-bold uppercase tracking-wider shrink-0 transition-colors"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.16 }}
           >
-            <Plane className="w-4 h-4" />
-            Book New Flight
-          </Link>
+            <Link
+              to="/flights"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#C5A059] hover:bg-[#D8B774] text-[#070F1D] text-xs font-bold uppercase tracking-wider shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Plane className="w-4 h-4" />
+              Book New Flight
+            </Link>
+          </motion.div>
         </div>
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-8">
         {!user ? (
-          <div className="rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D8B774]/25 p-12 sm:p-16 text-center max-w-2xl mx-auto shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-[#0B1F3A] dark:bg-[#C5A059]/15 text-[#D8B774] flex items-center justify-center mx-auto mb-5">
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45 }}
+            className="rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/12 dark:border-[#D8B774]/25 p-12 sm:p-16 text-center max-w-2xl mx-auto shadow-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.12 }}
+              className="w-16 h-16 rounded-2xl bg-[#0B1F3A] dark:bg-[#C5A059]/15 text-[#D8B774] flex items-center justify-center mx-auto mb-5"
+            >
               <Lock className="w-8 h-8" />
-            </div>
+            </motion.div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#9E7E3E] dark:text-[#D8B774]">
               Private Traveler Vault
             </p>
@@ -100,7 +131,7 @@ export const MyBookingsPage: React.FC = () => {
                 id="my-bookings-login-cta"
                 to="/login"
                 state={{ from: '/my-bookings' }}
-                className="px-6 py-3 rounded-xl bg-[#0B1F3A] hover:bg-[#132E54] dark:bg-[#C5A059] dark:hover:bg-[#D8B774] text-white dark:text-[#070F1D] text-xs font-bold uppercase tracking-wider transition-colors"
+                className="px-6 py-3 rounded-xl bg-[#0B1F3A] hover:bg-[#132E54] dark:bg-[#C5A059] dark:hover:bg-[#D8B774] text-white dark:text-[#070F1D] text-xs font-bold uppercase tracking-wider transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Log in to view your bookings
               </Link>
@@ -112,7 +143,7 @@ export const MyBookingsPage: React.FC = () => {
                 Create Account
               </Link>
             </div>
-          </div>
+          </motion.div>
         ) : (
           <>
             {/* Status Filter Tabs */}

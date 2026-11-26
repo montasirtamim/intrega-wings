@@ -147,19 +147,45 @@ export const FlightsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Editorial Page Header */}
-      <section className="bg-[#0B1F3A] dark:bg-[#070F1D] text-white pt-12 pb-28 border-b border-[#C5A059]/25">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D8B774]">
+      {/* Editorial Page Header with Subtle Gliding Aircraft Motif */}
+      <section className="relative overflow-hidden bg-[#0B1F3A] dark:bg-[#070F1D] text-white pt-12 pb-28 border-b border-[#C5A059]/25">
+        <motion.div
+          aria-hidden="true"
+          initial={{ x: '-10%', opacity: 0 }}
+          animate={{ x: '110%', opacity: [0, 0.14, 0.14, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-10 left-0 pointer-events-none text-[#D8B774]"
+        >
+          <Plane className="w-12 h-12 rotate-12" strokeWidth={1.2} />
+        </motion.div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D8B774]"
+          >
             International Ticketing &amp; Live GDS Inventory
-          </p>
-          <h1 className="font-serif text-3xl sm:text-5xl font-medium mt-2">
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+            className="font-serif text-3xl sm:text-5xl font-medium mt-2"
+          >
             Search &amp; Compare Global Flights
-          </h1>
-          <p className="text-sm sm:text-base text-slate-300 mt-3 max-w-2xl">
-            Compare official Intrega Wings fleet departures alongside global partner airlines.
-            Select any flight to proceed to dedicated seat selection and verified checkout.
-          </p>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="text-sm sm:text-base text-slate-300 mt-3 max-w-2xl"
+          >
+            Compare official Intrega Wings fleet departures alongside Bangladesh &amp; global
+            partner airlines. Select any flight to proceed to dedicated seat selection and verified
+            checkout.
+          </motion.p>
         </div>
       </section>
 
@@ -174,7 +200,12 @@ export const FlightsPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Filter Sidebar */}
-          <aside className="lg:col-span-3 rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/10 dark:border-white/10 p-5 space-y-6 lg:sticky lg:top-24">
+          <motion.aside
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.45, delay: 0.1 }}
+            className="lg:col-span-3 rounded-2xl bg-white dark:bg-[#111C2E] border border-[#0B1F3A]/10 dark:border-white/10 p-5 space-y-6 lg:sticky lg:top-24"
+          >
             <div className="flex items-center justify-between border-b border-[#0B1F3A]/10 dark:border-white/10 pb-3.5">
               <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#0B1F3A] dark:text-[#D8B774]">
                 <Filter className="w-3.5 h-3.5" />
@@ -289,7 +320,7 @@ export const FlightsPage: React.FC = () => {
                   ))}
               </div>
             </div>
-          </aside>
+          </motion.aside>
 
           {/* Right Flight Results List */}
           <div className="lg:col-span-9 space-y-5">
